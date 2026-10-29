@@ -4,11 +4,11 @@ import {
 } from '@angular/core';
 
 @Pipe({
-    name: 'replace'
+    name: 'replace',
+    standalone: false
 })
 export class ReplacePipe implements PipeTransform {
-  // tslint:disable-next-line:typedef
-  transform(value: string, char: string, valueToReplace: string){
-      return value.replace(char, valueToReplace);
+  transform(value: string | null | undefined, char: string, valueToReplace: string): string {
+      return (value ?? '').replace(char, valueToReplace);
   }
 }
