@@ -23,8 +23,27 @@ const thumb = file => ({ source: `https://upload.wikimedia.org/${file}?utm_sourc
 describe('image-search', () => {
   test('buildQueries usa nome completo, tecnologia principal e primeira palavra', () => {
     assert.deepEqual(buildQueries('Angular: Signals'), ['Angular Signals', 'Angular']);
-    assert.deepEqual(buildQueries('Python para Iniciantes'), ['Python para Iniciantes', 'Python']);
     assert.deepEqual(buildQueries('Docker'), ['Docker']);
+    assert.deepEqual(buildQueries('Java Spring Boot'), ['Java Spring Boot', 'Java']);
+  });
+
+  test('buildQueries ignora palavras genéricas de nome de curso', () => {
+    assert.deepEqual(buildQueries('Python para Iniciantes'), ['Python']);
+    assert.deepEqual(buildQueries('Introdução ao Python'), ['Python']);
+    assert.deepEqual(buildQueries('Curso Completo de Java: Fundamentos'), ['Java']);
+    assert.deepEqual(buildQueries('Curso Completo'), []);
+  });
+
+  test('relevanceScore descarta artigos cujo título é só uma palavra genérica', () => {
+    assert.equal(relevanceScore('Introdução', 'Introdução ao Python'), 0);
+    assert.equal(relevanceScore('Curso', 'Curso de Java'), 0);
+  });
+
+  test('nome só com palavras genéricas usa a imagem padrão sem consultar a API', async () => {
+    const calls = [];
+    const image = await findCourseImage('Curso Completo', { fetchImpl: fakeFetch({}, calls) });
+    assert.equal(image, DEFAULT_IMAGE);
+    assert.equal(calls.length, 0);
   });
 
   test('relevanceScore descarta artigos que não são o assunto do curso', () => {
@@ -63,15 +82,15 @@ describe('image-search', () => {
 
   test('ignora resultado irrelevante e cai para a tecnologia principal', async () => {
     const calls = [];
-    const image = await findCourseImage('Angular: Teste Fallback', {
+    const image = await findCourseImage('Angular: Fallback Demo', {
       fetchImpl: fakeFetch({
-        'pt|Angular Teste Fallback': [{ title: 'Orbital angular momentum', thumbnail: thumb('optica.jpg') }],
+        'pt|Angular Fallback Demo': [{ title: 'Orbital angular momentum', thumbnail: thumb('optica.jpg') }],
         'pt|Angular': [{ title: 'Angular (framework)', thumbnail: thumb('angular.png') }]
       }, calls)
     });
 
     assert.equal(image, 'https://upload.wikimedia.org/angular.png');
-    assert.deepEqual(calls, ['pt|Angular Teste Fallback', 'en|Angular Teste Fallback', 'pt|Angular', 'en|Angular']);
+    assert.deepEqual(calls, ['pt|Angular Fallback Demo', 'en|Angular Fallback Demo', 'pt|Angular', 'en|Angular']);
   });
 
   test('usa cache para o mesmo nome', async () => {

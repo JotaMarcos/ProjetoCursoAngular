@@ -229,7 +229,7 @@ Erros de validação retornam a lista de problemas:
 Quando um curso é criado sem `imageUrl`, a API ([`image-search.js`](course-manager-server/image-search.js)) consulta a Wikipedia em português e em inglês:
 
 1. **Termos tentados em ordem:** nome completo → tecnologia principal (antes do `:`) → primeira palavra.
-   *"Angular: Signals"* → `Angular Signals` → `Angular`.
+   *"Angular: Signals"* → `Angular Signals` → `Angular`. Palavras genéricas de nome de curso (*introdução, curso, fundamentos, iniciantes, de, ao*…) são ignoradas: *"Introdução ao Python"* → `Python`.
 2. **Filtro de relevância:** o título do artigo precisa ser o *assunto* do curso. *"Spring Boot"* é aceito para *"Java Spring Boot"*; *"Monty Python"* e *"Python (gênero)"* (a cobra) são descartados para *"Python"*.
 3. **Prioridade para tecnologia:** desambiguações como *"(programming language)"* ou *"(software)"* vencem.
 4. **Fallback seguro:** sem resultado relevante, sem internet ou com a API indisponível, o curso é salvo com [`default-course.svg`](src/assets/images/default-course.svg). O cadastro **nunca falha** por causa da imagem.
@@ -269,8 +269,11 @@ Para reportar uma vulnerabilidade, veja [SECURITY.md](SECURITY.md).
 
 ```bash
 npm test -- --watch=false   # Frontend: 20 testes (Vitest + jsdom)
-npm run test:server         # API: 23 testes (node:test)
+npm run test:server         # API: 26 testes (node:test)
+bash scripts/smoke-test.sh  # 27 verificações na API em execução (Git Bash / Linux / macOS)
 ```
+
+📋 Para uma validação completa e guiada — instalação, API com `curl`, interface e build — siga o **[Roteiro de testes no Git Bash](docs/ROTEIRO-DE-TESTES.md)**.
 
 | Suíte | O que cobre |
 |---|---|

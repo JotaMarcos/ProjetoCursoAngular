@@ -18,11 +18,23 @@ const normalize = text => text
 
 const words = text => normalize(text).split(/[^a-z0-9.+#]+/).filter(Boolean);
 
-// "Angular: Signals" -> ["Angular Signals", "Angular"]; "Python para Iniciantes" -> [..., "Python"]
+// Palavras comuns em nomes de curso que não são o assunto: sem isso, "Introdução ao Python"
+// casaria com o artigo "Introdução" e "Curso de Java" com o artigo "Curso".
+const GENERIC_WORDS = new Set(words(
+  'a o e as os ao aos de do da dos das em no na com para por um uma ' +
+  'curso cursos introducao intro fundamentos basico basicos avancado avancada intermediario ' +
+  'iniciante iniciantes completo completa pratico pratica essencial essenciais guia aprenda aprendendo ' +
+  'modulo parte nivel zero bootcamp workshop treinamento masterclass formacao teste test'
+));
+
+const isGeneric = word => GENERIC_WORDS.has(words(word)[0] ?? '');
+const withoutGenericWords = text => text.split(/\s+/).filter(word => word && !isGeneric(word)).join(' ');
+
+// "Angular: Signals" -> ["Angular Signals", "Angular"]; "Introdução ao Python" -> ["Python"]
 function buildQueries(courseName) {
-  const full = courseName.replace(/[:|\-–]+/g, ' ').replace(/\s+/g, ' ').trim();
-  const main = courseName.split(/[:|\-–]/)[0].trim();
-  const firstWord = main.split(/\s+/)[0];
+  const full = withoutGenericWords(courseName.replace(/[:|\-–]+/g, ' '));
+  const main = withoutGenericWords(courseName.split(/[:|\-–]/)[0]);
+  const firstWord = main.split(' ')[0];
   return [...new Set([full, main, firstWord].filter(Boolean))];
 }
 
@@ -37,7 +49,7 @@ function relevanceScore(pageTitle, query) {
   const base = match ? match[1] : pageTitle;
   const qualifier = match ? normalize(match[2]) : null;
 
-  if (!containsSequence(words(query), words(base))) {
+  if (!containsSequence(words(query), words(base)) || words(base).every(word => GENERIC_WORDS.has(word))) {
     return 0;
   }
   if (qualifier) {
