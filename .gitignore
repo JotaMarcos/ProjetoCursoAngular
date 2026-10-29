@@ -8,7 +8,10 @@
 /bazel-out
 
 # dependencies
-/node_modules
+node_modules/
+
+# Angular CLI cache
+/.angular/cache
 
 # profiling files
 chrome-profiler-events*.json
