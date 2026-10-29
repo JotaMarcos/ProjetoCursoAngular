@@ -7,5 +7,6 @@ import { Component } from '@angular/core';
 })
 
 export class NavBarComponent {
-
+  // Controla o menu em telas pequenas sem depender do JavaScript do Bootstrap.
+  collapsed = true;
 }

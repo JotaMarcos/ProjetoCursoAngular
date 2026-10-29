@@ -1,3 +1,16 @@
 .crop {
     overflow: hidden;
 }
+
+/* 5 estrelas x 14.8px = 74px, a mesma base usada em StarComponent.ngOnChanges(). */
+.stars {
+    width: 74px;
+    white-space: nowrap;
+}
+
+.stars .fa-star {
+    display: inline-block;
+    width: 14.8px;
+    font-size: 13px;
+    text-align: center;
+}
