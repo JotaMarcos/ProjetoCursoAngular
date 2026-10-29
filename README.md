@@ -1,28 +1,55 @@
-# CourseManager
+# ProjetoCursoAngular — CourseManager
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.2.
+Aplicação Angular 21 (NgModules) para gerenciar cursos, com uma API REST em Express (`course-manager-server/`).
 
-## Development server
+## Requisitos
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+- Node.js `^20.19`, `^22.12` ou `>=24`
+- npm 10+
 
-## Code scaffolding
+## Instalação
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+```bash
+npm ci
+npm ci --prefix course-manager-server
+```
+
+> Se for regenerar o `package-lock.json` do zero, use `npx npm@11 install`: o npm 10 tem um bug ao resolver os peer deps opcionais do Vitest (`Cannot read properties of null (reading 'edgesOut')`). Com o lockfile presente, `npm ci` funciona normalmente no npm 10.
+
+## Executando localmente
+
+Em dois terminais:
+
+```bash
+npm run server   # API em http://127.0.0.1:3100/api/courses
+npm start        # App em http://localhost:4200/
+```
+
+Variáveis de ambiente da API (opcionais):
+
+| Variável                | Padrão                  | Descrição                                   |
+|-------------------------|-------------------------|---------------------------------------------|
+| `PORT`                  | `3100`                  | Porta da API                                |
+| `HOST`                  | `127.0.0.1`             | Interface de rede (use `0.0.0.0` para expor) |
+| `CORS_ORIGINS`          | `http://localhost:4200` | Origens permitidas, separadas por vírgula   |
+| `RATE_LIMIT_PER_MINUTE` | `300`                   | Requisições por IP por minuto               |
+| `IMAGE_SEARCH`          | (ligado)                | `off` desliga a busca de imagem na web      |
+
+### Imagem automática no cadastro
+
+Ao cadastrar um curso sem imagem, a API busca uma na Wikipedia (pt e en, sem chave de API) a partir do nome do curso — por exemplo, "Python para Iniciantes" recebe o logo do Python. Se nada relevante for encontrado, ou se a busca falhar/estiver sem internet, o curso é salvo com `/assets/images/default-course.svg`. A lógica fica em `course-manager-server/image-search.js`.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+```bash
+npm run build    # saída em dist/course-manager
+```
 
-## Running unit tests
+No build de produção a app chama a API em `/api` (mesma origem); configure um proxy reverso com HTTPS.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Testes
 
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
-# ProjetoCursoAngular
+```bash
+npm test -- --watch=false   # testes unitários do Angular (Vitest + jsdom)
+npm run test:server         # testes da API (node:test)
+```

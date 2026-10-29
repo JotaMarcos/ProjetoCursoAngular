@@ -23,6 +23,9 @@ import { CourseListComponent } from './course-list.component';
           path: 'courses', component: CourseListComponent
         },
         {
+          path: 'course/new', component: CourseInfoComponent
+        },
+        {
           path: 'course/info/:id', component: CourseInfoComponent
         }
     ])

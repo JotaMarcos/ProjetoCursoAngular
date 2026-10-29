@@ -7,19 +7,17 @@ import { Course } from './course';
 import { CourseService } from './course.service';
 
 @Component({
-  templateUrl: './course-list.component.html'
+  templateUrl: './course-list.component.html',
+  standalone: false
 })
 
 export class CourseListComponent implements OnInit {
 
   filteredCourses: Course[] = [];
 
-
-  // tslint:disable-next-line:variable-name
   _courses: Course[] = [];
 
-  // tslint:disable-next-line:variable-name
-  _filterBy: string;
+  _filterBy: string = '';
 
   constructor(private courseService: CourseService) { }
 
@@ -31,7 +29,7 @@ export class CourseListComponent implements OnInit {
     this.courseService.retrieveAll().subscribe({
       next: courses => {
         this._courses = courses;
-        this.filteredCourses = this._courses;
+        this.applyFilter();
       },
       error: err => console.log('Error', err)
     });
@@ -49,21 +47,17 @@ export class CourseListComponent implements OnInit {
 
 
   set filter(value: string) {
-    this._filterBy = value;
-
-    // tslint:disable-next-line:max-line-length
-    this.filteredCourses = this._courses.filter((course: Course) => course.name.toLocaleLowerCase().indexOf(this._filterBy.toLocaleLowerCase()) > -1);
+    this._filterBy = value ?? '';
+    this.applyFilter();
   }
 
-  // tslint:disable-next-line:typedef
-  get filter() {
+  get filter(): string {
       return this._filterBy;
   }
 
+  private applyFilter(): void {
+    const filterBy = this._filterBy.toLocaleLowerCase();
+    this.filteredCourses = this._courses.filter((course: Course) => (course.name ?? '').toLocaleLowerCase().includes(filterBy));
+  }
 
 }
-
-
-
-
-

@@ -1,8 +1,13 @@
-<h2>Course Info</h2>
+<h2>{{ course?.id ? 'Course Info' : 'Cadastrar Curso' }}</h2>
 
 <hr>
 
 <form #courseForm="ngForm" *ngIf="course">
+
+    <p *ngIf="!course.id" class="text-muted">
+        <span class="fa fa-picture-o mr-1"></span>
+        A imagem do curso será buscada automaticamente na web a partir do nome ao salvar.
+    </p>
 
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Name:</label>
@@ -45,8 +50,8 @@
         </div>
     </div>
 
-    <button [disabled]="courseForm.invalid" (click)="save()" class="btn btn-primary mr-2">Save</button>
-    <button [routerLink]="['/courses']" class="btn btn-secondary">Back</button>
+    <button type="button" [disabled]="courseForm.invalid" (click)="save()" class="btn btn-primary mr-2">Save</button>
+    <button type="button" [routerLink]="['/courses']" class="btn btn-secondary">Back</button>
 
 
 

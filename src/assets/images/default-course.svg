@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" role="img" aria-label="Curso">
+  <rect width="200" height="200" rx="24" fill="#343a40"/>
+  <path d="M100 52 28 88l72 36 58-29v41h14V88z" fill="#f8f9fa"/>
+  <path d="M60 112v28c0 12 18 22 40 22s40-10 40-22v-28l-40 20z" fill="#adb5bd"/>
+</svg>

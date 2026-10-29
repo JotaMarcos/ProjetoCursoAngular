@@ -1,7 +1,6 @@
-import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { NgModule, provideZoneChangeDetection } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,17 +13,14 @@ import { CourseModule } from './courses/course.module';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
     CourseModule,
     CoreModule,
-    RouterModule.forRoot([
-      {
-        path: '', redirectTo: 'courses', pathMatch: 'full'
-      }
-    ])
+    AppRoutingModule
   ],
-  providers: [],
+  providers: [
+    provideZoneChangeDetection(),
+    provideHttpClient(withInterceptorsFromDi())
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
